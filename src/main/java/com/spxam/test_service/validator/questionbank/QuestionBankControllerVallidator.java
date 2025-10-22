@@ -1,19 +1,19 @@
 package com.spxam.test_service.validator.questionbank;
 
-import com.spxam.test_service.clients.IUserFeign;
-import com.spxam.test_service.dto.UserDt;
-import com.spxam.test_service.dto.questionbanl.CreateQuestIonBankPayLoad;
-import com.spxam.test_service.exception.NotAuthorizedAccess;
-import com.spxam.test_service.exception.UserNotFoundException;
-import com.spxam.test_service.repo.IQuestionBankRepo;
-import com.spxam.test_service.util.CommonUtil;
-import com.spxam.test_service.validator.ValidationResult;
-import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Component;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
+import org.springframework.stereotype.Component;
+
+import com.spxam.test_service.clients.IUserFeign;
+import com.spxam.test_service.dto.UserDt;
+import com.spxam.test_service.dto.questionbanl.CreateQuestIonBankPayLoad;
+import com.spxam.test_service.repo.IQuestionBankRepo;
+import com.spxam.test_service.util.CommonUtil;
+import com.spxam.test_service.validator.ValidationResult;
+
+import lombok.AllArgsConstructor;
 
 @Component
 @AllArgsConstructor
@@ -51,7 +51,7 @@ public class QuestionBankControllerVallidator {
         }
 
         iQuestionBankRepo.findByUserAndTime(payLoad.createdBy(), CommonUtil.getCurrentDateTime())
-                .forEach(qb -> errors.add("Question Bank already created for user at this time."));
+                .forEach(_ -> errors.add("Question Bank already created for user at this time."));
 
         return  new ValidationResult(errors.isEmpty(),errors);
     }

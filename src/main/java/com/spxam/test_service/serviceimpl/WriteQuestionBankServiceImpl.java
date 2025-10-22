@@ -12,18 +12,14 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class WriteQuestionBankServiceImpl implements IWriteQuestionBankService {
 
-    private final IQuestionBankRepo iQuestionBankRepo;
-    @Override
-    public void createQuestionBank(CreateQuestIonBankPayLoad payLoad) {
+	private final IQuestionBankRepo iQuestionBankRepo;
 
-        QuestionBank questionBank = QuestionBank.builder()
-                .name(payLoad.name())
-                .questionType(payLoad.questionType())
-                .questionQnty(payLoad.questionQnty())
-                .createdBy(payLoad.createdBy())
-                .createdAt(CommonUtil.getCurrentDateTime())
-                .isActive(true)
-                .build();
-        iQuestionBankRepo.save(questionBank);
-    }
+	@Override
+	public void createQuestionBank(CreateQuestIonBankPayLoad payLoad) {
+
+		QuestionBank questionBank = QuestionBank.builder().name(payLoad.name()).questionType(payLoad.questionType())
+				.questionQnty(payLoad.questionQnty()).createdBy(payLoad.createdBy())
+				.createdAt(CommonUtil.getCurrentDateTime()).isActive(true).build();
+		iQuestionBankRepo.save(questionBank);
+	}
 }

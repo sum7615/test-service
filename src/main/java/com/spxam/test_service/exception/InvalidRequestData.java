@@ -1,7 +1,9 @@
 package com.spxam.test_service.exception;
 
 public class InvalidRequestData extends RuntimeException{
-    public InvalidRequestData(String message){
+    private static final long serialVersionUID = -1329713669434672831L;
+
+	public InvalidRequestData(String message){
         super(message);
     }
 }

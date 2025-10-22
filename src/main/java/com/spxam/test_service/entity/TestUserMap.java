@@ -22,5 +22,8 @@ public class TestUserMap {
     private Test testId;
 
     @Column(name = "user_name")
-    private String userName;
+    private String assignedTo;
+
+    @Column(name = "assigned_by")
+    private String assignedBy;
 }

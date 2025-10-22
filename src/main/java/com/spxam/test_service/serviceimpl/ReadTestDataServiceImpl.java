@@ -19,37 +19,36 @@ import java.util.Set;
 @Service
 @AllArgsConstructor
 public class ReadTestDataServiceImpl implements IReadTestDataService {
-    private final ITestUserMapRep iTestUserMapRep;
+	private final ITestUserMapRep iTestUserMapRep;
 
-    private final IUserFeign iUserFeign;
-    private final ITestRepo iTestRepo;
+	private final IUserFeign iUserFeign;
+	private final ITestRepo iTestRepo;
 
-    @Override
-    public List<TestRes> getTestByUserName(String userName) {
+	@Override
+	public List<TestRes> getTestByUserName(String userName) {
 
-        UserDt userDt = null;
-        try {
-            userDt = iUserFeign.getUserByUserName(userName);
-            if(userDt == null){
-                throw new UserNotFoundException("User Not Found");
-            }
-        } catch (Exception e) {
-            throw new UserNotFoundException("User Not Found");
-        }
+		UserDt userDt = null;
+		try {
+			userDt = iUserFeign.getUserByUserName(userName);
+			if (userDt == null) {
+				throw new UserNotFoundException("User Not Found");
+			}
+		} catch (Exception e) {
+			throw new UserNotFoundException("User Not Found");
+		}
 
-        Set<String> roles = userDt.roles()
-                .stream()
-                .map(String::toLowerCase)
-                .collect(java.util.stream.Collectors.toSet());
-        if(roles.isEmpty()){
-            throw new UserNotFoundException("No Roles Found for User");
-        }
-        if(roles.contains("user")){
-            List<TestUserMap> res = iTestUserMapRep.getTestByUserName(userName).orElseThrow(()-> new NoTestFoundException("No Data Found"));
-            return TestToDtoConverter.convertToTestResList(res);
-        }else{
-            var res = iTestRepo.findByCreatedByIgnoreCase(userName);
-            return TestToDtoConverter.convertTestToTestResList(res);
-        }
-    }
+		Set<String> roles = userDt.roles().stream().map(String::toLowerCase)
+				.collect(java.util.stream.Collectors.toSet());
+		if (roles.isEmpty()) {
+			throw new UserNotFoundException("No Roles Found for User");
+		}
+		if (roles.contains("user")) {
+			List<TestUserMap> res = iTestUserMapRep.getTestByUserName(userName)
+					.orElseThrow(() -> new NoTestFoundException("No Data Found"));
+			return TestToDtoConverter.convertToTestResList(res);
+		} else {
+			var res = iTestRepo.findByCreatedByIgnoreCase(userName);
+			return TestToDtoConverter.convertTestToTestResList(res);
+		}
+	}
 }

@@ -18,32 +18,31 @@ import java.util.Set;
 @AllArgsConstructor
 public class ReadQuestionBankServiceImpl implements IReadQuestionBankService {
 
-    private final IUserFeign iUserFeign;
-    private final IQuestionBankRepo iQuestionBankRepo;
-    private final QuestionBankToDtoConverter questionBankToDtoConverter;
-    @Override
-    public List<QuestionBankLookUpRes> fetchQuestionBanks(String userName) {
-        UserDt userDt =null;
-        try {
-            userDt = iUserFeign.getUserByUserName(userName);
-            if(userDt == null){
-                throw new UserNotFoundException("User Not Found");
-            }
-        } catch (Exception e) {
-            throw new UserNotFoundException("User Not Found");
-        }
-        Set<String> roles = userDt.roles()
-                     .stream()
-                     .map(String::toLowerCase)
-                     .collect(java.util.stream.Collectors.toSet());
-        if(roles.isEmpty()){
-            throw new UserNotFoundException("No Roles Found for User");
-        }else if( roles.contains("user")){
-            throw new NotAuthorizedAccess("Unauthorized Access");
-        }
+	private final IUserFeign iUserFeign;
+	private final IQuestionBankRepo iQuestionBankRepo;
+	private final QuestionBankToDtoConverter questionBankToDtoConverter;
 
-        var entityObjs = iQuestionBankRepo.findByCreatedByAndIsActiveTrue(userName);
+	@Override
+	public List<QuestionBankLookUpRes> fetchQuestionBanks(String userName) {
+		UserDt userDt = null;
+		try {
+			userDt = iUserFeign.getUserByUserName(userName);
+			if (userDt == null) {
+				throw new UserNotFoundException("User Not Found");
+			}
+		} catch (Exception e) {
+			throw new UserNotFoundException("User Not Found");
+		}
+		Set<String> roles = userDt.roles().stream().map(String::toLowerCase)
+				.collect(java.util.stream.Collectors.toSet());
+		if (roles.isEmpty()) {
+			throw new UserNotFoundException("No Roles Found for User");
+		} else if (roles.contains("user")) {
+			throw new NotAuthorizedAccess("Unauthorized Access");
+		}
 
-        return questionBankToDtoConverter.toDtoList(entityObjs);
-    }
+		var entityObjs = iQuestionBankRepo.findByCreatedByAndIsActiveTrue(userName);
+
+		return questionBankToDtoConverter.toDtoList(entityObjs);
+	}
 }

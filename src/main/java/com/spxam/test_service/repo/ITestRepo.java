@@ -11,6 +11,7 @@ import java.util.Optional;
 
 public interface ITestRepo extends JpaRepository<Test,Long> {
 
+    Optional<Test> findById(@Param("id") Long id);
 
     @Query("SELECT t FROM Test t WHERE t.questionBank.id = :questionBankId AND t.isActive = true")
     Optional<Test> findByQuestionBank(@Param("questionBankId") Long questionBankId);

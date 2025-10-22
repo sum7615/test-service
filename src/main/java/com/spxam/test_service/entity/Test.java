@@ -49,8 +49,11 @@ public class Test {
     @JoinColumn(name = "question_bank_id", referencedColumnName = "id")
     private QuestionBank questionBank;
 
-    @Column(name = "totalMark")
+    @Column(name = "total_mark")
     private Long totalMark;
+
+    @Column(name = "pass_mark")
+    private Long passMark;
 
     @Column(name = "is_active")
     private Boolean isActive;

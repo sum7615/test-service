@@ -19,7 +19,7 @@ public class Attempt {
     private Long id;
 
     @Column(name ="user_name")
-   private String user_name;
+   private String userName;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name ="test_id",referencedColumnName = "id")
@@ -30,4 +30,7 @@ public class Attempt {
 
     @Column(name ="finished_at")
     private LocalDateTime finishedAt;
+
+    @Column(name ="score")
+    private Long score;
 }

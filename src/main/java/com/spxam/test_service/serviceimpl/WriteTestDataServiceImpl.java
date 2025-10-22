@@ -13,25 +13,19 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class WriteTestDataServiceImpl implements IWritetestDataService {
 
-    private final IQuestionBankRepo iQuestionBankRepo;
-    private final ITestRepo iTestRepo;
-    @Override
-    public void createTestData(CreateTestPayload payload) {
-        Test test = Test.builder()
-                    .name(payload.name())
-                    .description(payload.description())
-                    .startTime(payload.startTime())
-                    .endTime(payload.endTime())
-                    .duration(payload.duration())
-                    .createdBy(payload.createdBy())
-                    .createdDate(CommonUtil.getCurrentDateTime())
-                    .isActive(true)
-                    .totalMark(payload.totalMarks())
-                    .build();
-        if(payload.questionBankId()!=null){
-            iQuestionBankRepo.findByIdAndIsActiveTrue(payload.questionBankId()).ifPresent(test::setQuestionBank);
-        }
-        iTestRepo.save(test);
-        return ;
-    }
+	private final IQuestionBankRepo iQuestionBankRepo;
+	private final ITestRepo iTestRepo;
+
+	@Override
+	public void createTestData(CreateTestPayload payload) {
+		Test test = Test.builder().name(payload.name()).description(payload.description())
+				.startTime(payload.startTime()).endTime(payload.endTime()).duration(payload.duration())
+				.createdBy(payload.createdBy()).createdDate(CommonUtil.getCurrentDateTime()).isActive(true)
+				.totalMark(payload.totalMarks()).build();
+		if (payload.questionBankId() != null) {
+			iQuestionBankRepo.findByIdAndIsActiveTrue(payload.questionBankId()).ifPresent(test::setQuestionBank);
+		}
+		iTestRepo.save(test);
+		return;
+	}
 }

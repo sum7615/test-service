@@ -14,6 +14,12 @@ public class CommonUtil {
 		}
 	}
 
+	public static void validateMandatory(Long value, String fieldName, List<String> errors) {
+		if (value==null || value<=0) {
+			errors.add(fieldName + " is mandatory.");
+		}
+	}
+
 	public static LocalDateTime getCurrentDateTime() {
 		return LocalDateTime.now();
 	}
