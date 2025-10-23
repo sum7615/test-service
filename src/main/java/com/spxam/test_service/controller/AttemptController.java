@@ -8,6 +8,7 @@ import com.spxam.test_service.validator.attempt.DoAttemptValidator;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -18,7 +19,7 @@ public class AttemptController {
     private final DoAttemptValidator doAttemptValidator;
 
     @PostMapping("/start/test")
-    public ResponseEntity<String> startTest(StartTestDto payload){
+    public ResponseEntity<String> startTest(@RequestBody StartTestDto payload){
         var validationMsg = doAttemptValidator.validateStartTest(payload);
         if(!validationMsg.isValid()){
             throw new NotValidRequest(validationMsg.getErrors().toString());
@@ -30,7 +31,7 @@ public class AttemptController {
     }
 
     @PostMapping("/attempt/mcq")
-    public ResponseEntity<String> attemptMcq(DoAttemptPayload payload){
+    public ResponseEntity<String> attemptMcq(@RequestBody DoAttemptPayload payload){
 
         var validationMsg = doAttemptValidator.validate(payload);
         if(!validationMsg.isValid()){
@@ -42,7 +43,7 @@ public class AttemptController {
     }
 
     @PostMapping("/finish/test")
-    public ResponseEntity<String> finishTest(StartTestDto payload){
+    public ResponseEntity<String> finishTest(@RequestBody StartTestDto payload){
         var validationMsg = doAttemptValidator.validateStartTest(payload);
         if(!validationMsg.isValid()){
             throw new NotValidRequest(validationMsg.getErrors().toString());
