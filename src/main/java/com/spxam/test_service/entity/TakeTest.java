@@ -35,4 +35,13 @@ public class TakeTest {
 
     @Column(name="answered_at")
     private LocalDateTime answeredAt;
+
+    @Column(name="time_taken_in_seconds")
+    private Long timeTakenInSeconds;
+
+    @Column(name="total_attempt_count")
+    private Long totalAttemptCount;
+
+    @Column(name="last_updated_at")
+    private LocalDateTime lastUpdatedAt;
 }

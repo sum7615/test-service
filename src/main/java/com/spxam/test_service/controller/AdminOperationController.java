@@ -20,14 +20,22 @@ public class AdminOperationController {
 
     @PostMapping("assign/test")
     public ResponseEntity<String> assignTestToUsers(@RequestBody AssignTestPayload payload) {
-
         var validationMsg =  adminOperationValidator.validate(payload);
         if(!validationMsg.isValid()){
             throw new NotValidRequest(validationMsg.getErrors().toString());
         }
-
        iAdminActionService.assignTestToUsers(payload);
-
-        return new ResponseEntity<>("Test assigned successfully.", HttpStatus.OK);
+       return new ResponseEntity<>("Test assigned successfully.", HttpStatus.OK);
     }
+
+    @PostMapping("/revoke/test")
+    public ResponseEntity<String> revokeTestToUsers(@RequestBody AssignTestPayload payload) {
+        var validationMsg =  adminOperationValidator.validate(payload);
+        if(!validationMsg.isValid()){
+            throw new NotValidRequest(validationMsg.getErrors().toString());
+        }
+        iAdminActionService.revokeTestToUsers(payload);
+        return new ResponseEntity<>("Test revoked successfully.", HttpStatus.OK);
+    }
+
 }

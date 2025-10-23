@@ -19,7 +19,7 @@ public class Attempt {
     private Long id;
 
     @Column(name ="user_name")
-   private String userName;
+    private String userName;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name ="test_id",referencedColumnName = "id")

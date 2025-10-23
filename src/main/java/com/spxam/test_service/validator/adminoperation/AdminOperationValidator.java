@@ -46,7 +46,7 @@ public class AdminOperationValidator {
 
         // check assign to is valid and not having same test unattempted
         try {
-            userDt = iUserFeign.getUserByUserName(payload.assignBy());
+            userDt = iUserFeign.getUserByUserName(payload.assignTo());
             if (userDt == null) {
                 throw new UserNotFoundException("Assign to User Not Found");
             }
