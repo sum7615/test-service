@@ -29,6 +29,9 @@ public class QuestionBank {
 	@Column(name = "name")
 	private String name;
 
+	@Column(name = "description")
+	private String description;
+
 	@Column(name = "created_at")
 	private LocalDateTime createdAt;
 
@@ -37,9 +40,9 @@ public class QuestionBank {
 
 	@Column(name = "created_by")
 	private String createdBy;
-
-	@Column(name = "question_qnty")
-	private Long questionQnty;
+	
+	@Column(name = "updated_by")
+	private String updatedBy;
 
 	@Column(name = "question_type")
 	private String questionType;

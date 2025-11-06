@@ -1,5 +1,7 @@
 package com.spxam.test_service.serviceimpl;
 
+import org.springframework.stereotype.Service;
+
 import com.spxam.test_service.dto.adminoperation.AssignTestPayload;
 import com.spxam.test_service.entity.Test;
 import com.spxam.test_service.entity.TestUserMap;
@@ -8,10 +10,8 @@ import com.spxam.test_service.repo.ITestRepo;
 import com.spxam.test_service.repo.ITestUserMapRep;
 import com.spxam.test_service.service.IAdminActionService;
 import com.spxam.test_service.util.CommonUtil;
-import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
 
 @Service
 @AllArgsConstructor
@@ -70,6 +70,9 @@ public class AdminActionServiceImpl implements IAdminActionService {
                 .assignedTo(payload.assignTo())
                 .assignedBy(payload.assignBy())
                 .testId(test)
+                .isActive(true)
+                .isCompleted(false)
+                .isStarted(false)
                 .assignedAt(current)
                 .build());
 

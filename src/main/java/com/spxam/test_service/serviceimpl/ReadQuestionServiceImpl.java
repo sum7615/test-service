@@ -45,8 +45,8 @@ public class ReadQuestionServiceImpl implements IReadQuestionService {
 		return iQuestionRepo.findByQuestionBankId(questionBankId, userName).stream()
 				.map(q -> QuestionDataRes.builder().id(q.getId()).title(q.getTitle())
 						.problemStatement(q.getProblemStatement()).problemStatementImg(q.getProblemStatementImg())
-						.o1(q.getO1()).o2(q.getO2()).o3(q.getO3()).o4(q.getO4()).o5(q.getO5()).ans(q.getAns())
-						.mark(q.getMarks()).build())
+						.o1(q.getO1()).o2(q.getO2()).o3(q.getO3()).o4(q.getO4()).o5(q.getO5()).ans(q.getAns()).type(q.getType())
+						.mark(q.getMarks()).level(q.getLevel().getName()).build())
 				.toList();
 
 	}

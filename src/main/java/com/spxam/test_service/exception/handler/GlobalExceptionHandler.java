@@ -1,6 +1,7 @@
 package com.spxam.test_service.exception.handler;
 
 import com.spxam.test_service.exception.ExceptionResponse;
+import com.spxam.test_service.exception.InternalServerError;
 import com.spxam.test_service.exception.NotAuthorizedAccess;
 import com.spxam.test_service.exception.UserNotFoundException;
 import org.springframework.http.ResponseEntity;
@@ -21,4 +22,11 @@ public class GlobalExceptionHandler {
         ExceptionResponse response = new ExceptionResponse("403", ex.getMessage());
         return new ResponseEntity<>(response, org.springframework.http.HttpStatus.FORBIDDEN);
     }
+    
+    @ExceptionHandler(InternalServerError.class)
+    public ResponseEntity<ExceptionResponse> handle(InternalServerError ex) {
+        ExceptionResponse response = new ExceptionResponse("403", ex.getMessage());
+        return new ResponseEntity<>(response, org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    
 }

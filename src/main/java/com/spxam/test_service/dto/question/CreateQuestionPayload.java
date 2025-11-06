@@ -15,6 +15,7 @@ public record CreateQuestionPayload(String title,
                                     Long mark,
                                     String type,
                                     String createdBy,
-                                    Long questionBankId
+                                    Long questionBankId,
+                                    String level
                                     ) {
 }

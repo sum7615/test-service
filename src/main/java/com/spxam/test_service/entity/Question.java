@@ -58,6 +58,9 @@ public class Question {
     @Column(name = "created_by")
     private String createdBy;
 
+    @Column(name = "updated_by")
+    private String updatedBy;
+    
     @Column(name = "type")
     private String type;
 
@@ -67,4 +70,8 @@ public class Question {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="bank_id",referencedColumnName = "id")
     private QuestionBank bankId;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "level_id", referencedColumnName = "id")
+    private Level level;
 }

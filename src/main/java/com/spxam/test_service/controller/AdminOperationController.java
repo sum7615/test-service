@@ -38,4 +38,13 @@ public class AdminOperationController {
         return new ResponseEntity<>("Test revoked successfully.", HttpStatus.OK);
     }
 
+    @PostMapping("/reschedule/test")
+
+    public ResponseEntity<String> reScheduleTest(){
+
+        // mail should be sent to the test creator and th elogged in user and to all the user who has this test assigned
+        return ResponseEntity.ok("Success");
+    }
+
+
 }

@@ -1,10 +1,10 @@
 package com.spxam.test_service.event;
 
 import org.springframework.context.ApplicationEvent;
-import org.springframework.stereotype.Component;
 
 public class CountScoreEvent extends ApplicationEvent {
-    private Long attemptId;
+    private static final long serialVersionUID = 6154000840857257969L;
+	private Long attemptId;
 
     public CountScoreEvent(Object source,Long attemptId) {
         super(source);

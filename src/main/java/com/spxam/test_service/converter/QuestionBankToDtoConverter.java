@@ -10,7 +10,7 @@ import java.util.List;
 public class QuestionBankToDtoConverter {
     public List<QuestionBankLookUpRes> toDtoList(List<QuestionBank> questionBank){
         return questionBank.stream().map(q->{
-            return new QuestionBankLookUpRes(q.getName(),q.getId(),q.getQuestionQnty(),q.getQuestionType());
+            return new QuestionBankLookUpRes(q.getName(),q.getId(),q.getQuestionType(),q.getDescription());
         }).toList();
     }
 }

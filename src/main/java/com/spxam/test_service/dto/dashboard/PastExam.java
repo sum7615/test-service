@@ -5,6 +5,7 @@ import lombok.Builder;
 import java.time.LocalDateTime;
 @Builder
 public record PastExam(
+		Long id,
         String title,
         String description,
         LocalDateTime startTime,
@@ -15,6 +16,7 @@ public record PastExam(
         LocalDateTime attemptStartTime,
         LocalDateTime attemptEndTime,
         Long obtainedMark,
-        Long attemptedDuration,  // duration in minutes
-        Long totalQsnAttempted
+        Long attemptedDuration,
+        Long totalQsnAttempted,
+        String status
 ) { }

@@ -1,8 +1,20 @@
 package com.spxam.test_service.entity;
-import jakarta.persistence.*;
-import lombok.*;
-
 import java.time.LocalDateTime;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
@@ -44,13 +56,23 @@ public class Test {
     @Column(name = "created_by")
     private String  createdBy;
 
+    @Column(name = "updated_by")
+    private String  updatedBy;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_bank_id", referencedColumnName = "id")
     private QuestionBank questionBank;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "level_id", referencedColumnName = "id")
+    private Level level;
+
     @Column(name = "total_mark")
     private Long totalMark;
+
+    @Column(name = "total_questions")
+    private Long totalQuestions;
 
     @Column(name = "pass_mark")
     private Long passMark;

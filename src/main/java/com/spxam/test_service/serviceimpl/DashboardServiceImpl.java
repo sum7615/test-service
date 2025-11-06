@@ -1,10 +1,12 @@
 package com.spxam.test_service.serviceimpl;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -15,7 +17,6 @@ import com.spxam.test_service.dto.dashboard.DashBoardRes;
 import com.spxam.test_service.dto.dashboard.PastExam;
 import com.spxam.test_service.dto.dashboard.UpcomingExam;
 import com.spxam.test_service.entity.Attempt;
-import com.spxam.test_service.entity.TakeTest;
 import com.spxam.test_service.entity.Test;
 import com.spxam.test_service.entity.TestUserMap;
 import com.spxam.test_service.exception.UserNotFoundException;
@@ -57,11 +58,12 @@ public class DashboardServiceImpl implements IDashboardService {
 
 		Set<Test> allTest = userTestMap.get().stream().map(TestUserMap::getTestId).collect(Collectors.toSet());
 
-		allTest.addAll(iTestRepo.findByCreatedByIgnoreCase(userName));
+//		allTest.addAll(iTestRepo.findByCreatedByIgnoreCase(userName));
 
 		List<Attempt> allAttempt = iAttemptRepo.findByUserName(userName);
 
-		List<Test> attemptedTest = allAttempt.stream().map(Attempt::getTestId).toList();
+		List<Long> completedTest =allAttempt.stream().filter(e->e.getFinishedAt()!=null).map(e->e.getTestId().getId()).toList(); 
+		List<Test> attemptedTest = allAttempt.stream().filter(t->t.getFinishedAt()!=null).map(Attempt::getTestId).toList();
 
 		allTest.addAll(attemptedTest);
 
@@ -71,49 +73,69 @@ public class DashboardServiceImpl implements IDashboardService {
 		LocalDateTime currentDateTime = LocalDateTime.now();
 
 		// Up-coming test
-		allTest.stream().filter(e -> currentDateTime.isAfter(e.getStartTime())).forEach(at -> {
-			UpcomingExam ut = UpcomingExam.builder().title(at.getName()).description(at.getDescription())
+		allTest.stream().filter(e -> currentDateTime.isBefore(e.getEndTime())&&!completedTest.contains(e.getId()))
+		.forEach(at -> {
+			UpcomingExam ut = UpcomingExam.builder().id(at.getId()).title(at.getName()).description(at.getDescription())
 					.startTime(at.getStartTime()).endTime(at.getEndTime()).totalMark(at.getTotalMark())
-					.passMark(at.getPassMark()).duration(at.getDuration()).build();
+					.passMark(at.getPassMark()).duration(at.getDuration()).status("Pending").build();
 			upComingExam.add(ut);
 		});
 
-		// Past Test
-		allTest.stream().filter(e -> currentDateTime.isBefore(e.getStartTime())).forEach(e -> {
-			PastExam pt = PastExam.builder().title(e.getName()).description(e.getDescription())
-					.startTime(e.getStartTime()).endTime(e.getEndTime()).totalMark(e.getTotalMark())
-					.passMark(e.getPassMark()).duration(e.getDuration()).attemptStartTime(null).attemptEndTime(null)
-					.obtainedMark(0L).attemptedDuration(0L).totalQsnAttempted(0L).build();
+		// past test
+		Map<Long, Attempt> attemptMap = allAttempt.stream()
+			    .collect(Collectors.toMap(a -> a.getTestId().getId(), Function.identity()));
 
-			if (attemptedTest.contains(e)) {
-				Attempt attempt = allAttempt.stream().filter(attempt1 -> attempt1.getTestId().getId().equals(e.getId()))
-						.findFirst().orElse(null);
+		allTest.stream()
+	    .filter(e -> currentDateTime.isAfter(e.getEndTime()) || completedTest.contains(e.getId()))
+	    .forEach(e -> {
+	    	Attempt attempt = attemptMap.get(e.getId());
 
-				if (attempt != null) {
+	        Long attemptedDuration = 0L;
+	        Long questionAttempted = 0L;
+	        Long obtainedMark = 0L;
+	        String status = "Expired";
+	        LocalDateTime attemptStartTime = null;
+	        LocalDateTime attemptEndTime = null;
 
-					Long attemptedDuration = 0L;
-					Long questionAttempted = 0L;
-					if (attempt.getAttemptedAt() != null && attempt.getFinishedAt() != null) {
-						attemptedDuration = java.time.Duration
-								.between(attempt.getAttemptedAt(), attempt.getFinishedAt()).toSeconds();
-					}
-					var answeredQuestions = iTakeTestRepo.findByAttemptId(attempt.getId());
-					if (answeredQuestions != null && !answeredQuestions.isEmpty()) {
-						Set<Long> questionIds = new HashSet<>();
-						for (TakeTest tt : answeredQuestions) {
-							questionIds.add(tt.getQuestion().getId());
-						}
-						questionAttempted = (long) questionIds.size();
-					}
+	        if (attempt != null && attemptedTest.contains(e)) {
+	            if (attempt.getAttemptedAt() != null && attempt.getFinishedAt() != null) {
+	                attemptedDuration = Duration.between(attempt.getAttemptedAt(), attempt.getFinishedAt()).toSeconds();
+	            }
 
-					pt = PastExam.builder().attemptStartTime(attempt.getAttemptedAt())
-							.attemptEndTime(attempt.getFinishedAt()).obtainedMark(attempt.getScore())
-							.attemptedDuration(attemptedDuration).totalQsnAttempted(questionAttempted).build();
-				}
-			}
+	            var answeredQuestions = iTakeTestRepo.findByAttemptId(attempt.getId());
+	            if (answeredQuestions != null && !answeredQuestions.isEmpty()) {
+	                questionAttempted = answeredQuestions.stream()
+	                        .map(tt -> tt.getQuestion().getId())
+	                        .distinct()
+	                        .count();
+	            }
 
-			pastExam.add(pt);
-		});
+	            obtainedMark = attempt.getScore();
+	            status = "Attempted";
+	            attemptStartTime = attempt.getAttemptedAt();
+	            attemptEndTime = attempt.getFinishedAt();
+	        }
+
+	        PastExam pt = PastExam.builder()
+	            .id(e.getId())
+	            .title(e.getName())
+	            .description(e.getDescription())
+	            .startTime(e.getStartTime())
+	            .endTime(e.getEndTime())
+	            .totalMark(e.getTotalMark())
+	            .passMark(e.getPassMark())
+	            .duration(e.getDuration())
+	            .attemptStartTime(attemptStartTime)
+	            .attemptEndTime(attemptEndTime)
+	            .obtainedMark(obtainedMark)
+	            .attemptedDuration(attemptedDuration)
+	            .totalQsnAttempted(questionAttempted)
+	            .status(status)
+	            .build();
+
+	        pastExam.add(pt);
+	    });
+
 		return DashBoardRes.builder().past(pastExam).upcoming(upComingExam).build();
 
 	}

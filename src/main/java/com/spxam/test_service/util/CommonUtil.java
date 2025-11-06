@@ -8,6 +8,12 @@ public class CommonUtil {
 	public static boolean isEmptyString(String str) {
 		return str==null || str.isEmpty();
 	}
+	
+	public static boolean isEmptyLong(Long value) {
+		return value==null ;
+	}
+	
+	
 	public static void validateMandatory(String value, String fieldName, List<String> errors) {
 		if (CommonUtil.isEmptyString(value)) {
 			errors.add(fieldName + " is mandatory.");
@@ -15,7 +21,7 @@ public class CommonUtil {
 	}
 
 	public static void validateMandatory(Long value, String fieldName, List<String> errors) {
-		if (value==null || value<=0) {
+		if (CommonUtil.isEmptyLong(value)|| value<=0) {
 			errors.add(fieldName + " is mandatory.");
 		}
 	}

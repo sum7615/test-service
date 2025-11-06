@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 import com.spxam.test_service.clients.IUserFeign;
 import com.spxam.test_service.dto.UserDt;
 import com.spxam.test_service.dto.questionbanl.CreateQuestIonBankPayLoad;
+import com.spxam.test_service.dto.questionbanl.DeleteQuestionBankPayload;
+import com.spxam.test_service.dto.questionbanl.UpdateQuestionBankPayload;
 import com.spxam.test_service.repo.IQuestionBankRepo;
 import com.spxam.test_service.util.CommonUtil;
 import com.spxam.test_service.validator.ValidationResult;
@@ -20,6 +22,74 @@ import lombok.AllArgsConstructor;
 public class QuestionBankControllerVallidator {
     private final IUserFeign iUserFeign;
     private final IQuestionBankRepo iQuestionBankRepo;
+    
+    public ValidationResult validateDeletQuestionBankPayload(DeleteQuestionBankPayload payLoad){
+    	 List<String> errors = new ArrayList<>();
+
+         CommonUtil.validateMandatory(payLoad.id(),"Id",errors);
+         CommonUtil.validateMandatory(payLoad.userName(),"User Name",errors);
+
+
+         UserDt userDt=null;
+         try{
+             userDt= iUserFeign.getUserByUserName(payLoad.userName());
+         }catch (Exception e){
+             errors.add("Not a valid user.");
+         }
+
+         Set<String> roles = userDt.roles()
+                 .stream()
+                 .map(String::toLowerCase)
+                 .collect(java.util.stream.Collectors.toSet());
+         if(roles.isEmpty()){
+             errors.add("No Roles Found for User");
+         }
+         if(roles.contains("user")){
+             errors.add("Unauthorized Access");
+         }
+
+
+         
+         return  new ValidationResult(errors.isEmpty(),errors);
+
+         
+    }
+    
+    public ValidationResult validateUpdateQuestionBankPayload(UpdateQuestionBankPayload payLoad){
+        List<String> errors = new ArrayList<>();
+
+        CommonUtil.validateMandatory(payLoad.id(),"Id",errors);
+        CommonUtil.validateMandatory(payLoad.name(),"Name",errors);
+        CommonUtil.validateMandatory(payLoad.userName(),"Created By",errors);
+        CommonUtil.validateMandatory(payLoad.type(),"Question Type",errors);
+        
+        
+        
+        UserDt userDt=null;
+        try{
+            userDt= iUserFeign.getUserByUserName(payLoad.userName());
+        }catch (Exception e){
+            errors.add("Not a valid user.");
+        }
+
+        Set<String> roles = userDt.roles()
+                .stream()
+                .map(String::toLowerCase)
+                .collect(java.util.stream.Collectors.toSet());
+        if(roles.isEmpty()){
+            errors.add("No Roles Found for User");
+        }
+        if(roles.contains("user")){
+            errors.add("Unauthorized Access");
+        }
+
+
+        
+        return  new ValidationResult(errors.isEmpty(),errors);
+
+    }
+    
+    
 
     public ValidationResult validateCreateQuestionBankPayload(CreateQuestIonBankPayLoad payLoad) {
 
@@ -27,9 +97,6 @@ public class QuestionBankControllerVallidator {
 
         CommonUtil.validateMandatory(payLoad.name(),"Name",errors);
         CommonUtil.validateMandatory(payLoad.createdBy(),"Created By",errors);
-        if(payLoad.questionQnty() == null || payLoad.questionQnty() <= 0){
-            errors.add("Question Quantity should be greater than zero.");
-        }
         CommonUtil.validateMandatory(payLoad.questionType(),"Question Type",errors);
 
         UserDt userDt=null;

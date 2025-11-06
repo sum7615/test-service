@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 import com.spxam.test_service.clients.IUserFeign;
 import com.spxam.test_service.dto.UserDt;
 import com.spxam.test_service.dto.test.CreateTestPayload;
+import com.spxam.test_service.dto.test.DeleteTestPayload;
+import com.spxam.test_service.dto.test.UpdateTestPayload;
 import com.spxam.test_service.repo.IQuestionBankRepo;
 import com.spxam.test_service.repo.ITestRepo;
 import com.spxam.test_service.util.CommonUtil;
@@ -51,6 +53,10 @@ public class TestControllerValidator {
 		CommonUtil.validateMandatory(payload.createdBy(), "Created By", errors);
 		CommonUtil.validateMandatory(payload.name(), "Name", errors);
 		CommonUtil.validateMandatory(payload.description(), "Description", errors);
+		CommonUtil.validateMandatory(payload.totalMarks(), "Total Marks", errors);
+		CommonUtil.validateMandatory(payload.totalQuestions(), "Total Questions", errors);
+		CommonUtil.validateMandatory(payload.passMark(), "Pass Mark", errors);
+
 		if (payload.totalMarks() == null) {
 			errors.add("Total Marks is mandatory.");
 		}
@@ -93,6 +99,64 @@ public class TestControllerValidator {
 				errors.add("Start Time and End Time cannot be the same.");
 			}
 		}
+		return new ValidationResult(errors.isEmpty(), errors);
+	}
+
+	public ValidationResult vaidationUpdateTestPayload(UpdateTestPayload payload) {
+		List<String> errors = new ArrayList<>();
+		UserDt userDt = null;
+		try {
+			userDt = iUserFeign.getUserByUserName(payload.userName());
+		} catch (Exception e) {
+			errors.add("Not a valid user.");
+		}
+
+		Set<String> roles = userDt.roles().stream().map(String::toLowerCase)
+				.collect(java.util.stream.Collectors.toSet());
+		if (roles.isEmpty()) {
+			errors.add("No Roles Found for User");
+		}
+		if (roles.contains("user")) {
+			errors.add("Unauthorized Access");
+		}
+		
+		
+		
+		CommonUtil.validateMandatory(payload.id(), "Id", errors);
+		CommonUtil.validateMandatory(payload.userName(), "Updated By", errors);
+		CommonUtil.validateMandatory(payload.name(), "Name", errors);
+		CommonUtil.validateMandatory(payload.description(), "Description", errors);
+		CommonUtil.validateMandatory(payload.totalMarks(), "Total Marks", errors);
+		CommonUtil.validateMandatory(payload.totalQuestions(), "Total Questions", errors);
+		CommonUtil.validateMandatory(payload.passMark(), "Pass Mark", errors);
+
+		
+		return new ValidationResult(errors.isEmpty(), errors);
+	}
+
+	public ValidationResult vaidationDeleteTestPayload(DeleteTestPayload payload) {
+		List<String> errors = new ArrayList<>();
+		UserDt userDt = null;
+		try {
+			userDt = iUserFeign.getUserByUserName(payload.userName());
+		} catch (Exception e) {
+			errors.add("Not a valid user.");
+		}
+
+		Set<String> roles = userDt.roles().stream().map(String::toLowerCase)
+				.collect(java.util.stream.Collectors.toSet());
+		if (roles.isEmpty()) {
+			errors.add("No Roles Found for User");
+		}
+		if (roles.contains("user")) {
+			errors.add("Unauthorized Access");
+		}
+		
+		
+		
+		CommonUtil.validateMandatory(payload.id(), "Id", errors);
+		CommonUtil.validateMandatory(payload.userName(), "Updated By", errors);
+		
 		return new ValidationResult(errors.isEmpty(), errors);
 	}
 }
